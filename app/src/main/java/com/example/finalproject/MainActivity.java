@@ -35,12 +35,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-     //   if (firebaseAuth.getCurrentUser() != null)
-      //  {
+        if (firebaseAuth.getCurrentUser() != null)
+        {
 
-     //       finish();
-       //     startActivity(new Intent(getApplicationContext() , ProfileActivity.class));
-     //   }
+            finish();
+            startActivity(new Intent(getApplicationContext() , ProfileActivity.class));
+        }
 
 
 

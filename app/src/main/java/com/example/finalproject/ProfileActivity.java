@@ -35,7 +35,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
 
 
-    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
