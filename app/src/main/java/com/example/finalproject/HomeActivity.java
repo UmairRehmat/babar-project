@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -75,12 +76,17 @@ public class HomeActivity
     {
         FoodDetailsAdapter adapter = new FoodDetailsAdapter(mFoodDetailsList, HomeActivity.this,
                                                             position -> {
-                                                                Toast.makeText(this,
-                                                                               "order send for: " + mFoodDetailsList.get(
-                                                                                       position)
-                                                                                                                    .getFoodName(),
-                                                                               Toast.LENGTH_SHORT)
-                                                                     .show();
+                                                                new AlertDialog.Builder(this)
+                                                                        .setMessage(
+                                                                                "order send for: " + mFoodDetailsList.get(
+                                                                                        position)
+                                                                                                                     .getFoodName())
+                                                                        .setTitle("order sent")
+                                                                        .setCancelable(false)
+                                                                        .setPositiveButton(
+                                                                                "ok", null)
+                                                                        .create()
+                                                                        .show();
                                                             });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);

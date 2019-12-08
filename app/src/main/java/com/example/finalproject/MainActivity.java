@@ -18,7 +18,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity
+        extends AppCompatActivity
+        implements View.OnClickListener
+{
 
     private FirebaseAuth firebaseAuth;
     private Button button;
@@ -26,10 +29,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editTextPass;
     private TextView textView;
 
-    private ProgressDialog progressDialog ;
+    private ProgressDialog progressDialog;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -39,15 +43,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
 
             finish();
-            startActivity(new Intent(getApplicationContext() , ProfileActivity.class));
+            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
         }
 
 
-
-        button = (Button) findViewById(R.id.button);
-        editTextmail =(EditText) findViewById(R.id.email);
-        editTextPass =(EditText) findViewById(R.id.pass);
-        textView= (TextView) findViewById(R.id.textv);
+        button = (Button)findViewById(R.id.button);
+        editTextmail = (EditText)findViewById(R.id.email);
+        editTextPass = (EditText)findViewById(R.id.pass);
+        textView = (TextView)findViewById(R.id.textv);
 
         button.setOnClickListener(this);
         textView.setOnClickListener(this);
@@ -55,18 +58,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void RegisterUsr() {
+    private void RegisterUsr()
+    {
 
-        String email = editTextmail.getText().toString().trim();
-        String password = editTextPass.getText().toString().trim();
+        String email = editTextmail.getText()
+                                   .toString()
+                                   .trim();
+        String password = editTextPass.getText()
+                                      .toString()
+                                      .trim();
 
-        if (TextUtils.isEmpty(email)) {
+        if (TextUtils.isEmpty(email))
+        {
 
-            Toast.makeText(this, "Please Enter Your Email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please Enter Your Email", Toast.LENGTH_SHORT)
+                 .show();
             return;
         }
-        if (TextUtils.isEmpty(password)) {
-            Toast.makeText(this, "Please Enter Your Password", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(password))
+        {
+            Toast.makeText(this, "Please Enter Your Password", Toast.LENGTH_SHORT)
+                 .show();
             return;
         }
 
@@ -74,33 +86,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         progressDialog.show();
 
 
-        firebaseAuth.createUserWithEmailAndPassword(email , password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(MainActivity.this ,"Register Successfully",Toast.LENGTH_LONG).show();
-                            finish();
-                        }
-                        else {
-                            Toast.makeText(MainActivity.this ,"Could Not Register",Toast.LENGTH_LONG).show();
-                        }
-                        progressDialog.dismiss();
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>()
+                    {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task)
+                        {
+                            if (task.isSuccessful())
+                            {
+                                Toast.makeText(MainActivity.this, "Register Successfully",
+                                               Toast.LENGTH_LONG)
+                                     .show();
+                                finish();
+                            }
+                            else
+                            {
+                                Toast.makeText(MainActivity.this, "Could Not Register",
+                                               Toast.LENGTH_LONG)
+                                     .show();
+                            }
+                            progressDialog.dismiss();
 
-                    }
-                });
+                        }
+                    });
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View v)
+    {
 
-        if(v == button)
+        if (v == button)
         {
             RegisterUsr();
         }
-        if (v == textView){
+        if (v == textView)
+        {
 
-            startActivity(new Intent(this , Login.class));
+            startActivity(new Intent(this, Login.class));
         }
     }
 }
