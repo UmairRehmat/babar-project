@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
+    android:background="#85aaaaaa"
+    android:padding="15dp"
     tools:context=".ProfileActivity">
 
 
@@ -13,77 +14,82 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginBottom="20dp"
+        android:background="@drawable/strok"
         android:scaleType="centerCrop"
         android:src="@drawable/add_ic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.113"
+        app:layout_constraintHorizontal_bias="0.14"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.046" />
+        app:layout_constraintVertical_bias="0.091" />
+
+
+    <TextView
+        android:id="@+id/view_upoad"
+        android:layout_width="353dp"
+        android:layout_height="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.282" />
 
     <Button
         android:id="@+id/upload_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="94dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="84dp"
+        android:background="@drawable/round"
         android:text="UPLOAD"
-        app:layout_constraintBottom_toTopOf="@+id/progress_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/chose_file"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.618"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chose_file" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.023" />
 
 
     <Button
         android:id="@+id/logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginEnd="55dp"
         android:layout_marginBottom="60dp"
+        android:background="@drawable/order_delete"
         android:text="Logout"
+        android:textColor="@color/ef_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/view_upload"
-        android:layout_width="104dp"
-        android:layout_height="23dp"
-        android:text="Show Upload"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.947"
+        app:layout_constraintHorizontal_bias="0.52"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.275" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/food_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_height="50dp"
+        android:background="@drawable/edittext_background"
         android:hint="Food Name"
+        android:paddingStart="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.157"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_upload" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.371" />
 
     <EditText
         android:id="@+id/food_price"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="15dp"
+        android:background="@drawable/edittext_background"
         android:hint="Food Price"
         android:inputType="number"
+        android:paddingStart="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/food_name" />
@@ -91,23 +97,30 @@
     <EditText
         android:id="@+id/phone_number"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="15dp"
-        android:hint="contact  number"
-        android:inputType="phone"
+        android:background="@drawable/edittext_background"
+        android:hint="Food Description"
+        android:paddingStart="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/food_price" />
 
     <Button
         android:id="@+id/save_data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginEnd="55dp"
+        android:background="@drawable/rounded_button"
         android:text="save data"
-        app:layout_constraintBottom_toTopOf="@+id/logout"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phone_number" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.692" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,9 @@ package com.example.finalproject;
 
 public class FoodDetails
 {
+    private String foodId;
+
+
     private String foodName;
     private String imageUrl;
     private String postedBy;
@@ -13,13 +16,24 @@ public class FoodDetails
         //empty required constructor
     }
 
-    public FoodDetails(String foodName, String imageUrl, String postedBy, String price, String number)
+    public FoodDetails(String foodId, String foodName, String imageUrl, String postedBy, String price, String number)
     {
+        this.foodId = foodId;
         this.foodName = foodName;
         this.imageUrl = imageUrl;
         this.postedBy = postedBy;
         this.price = price;
         this.number = number;
+    }
+
+    public String getFoodId()
+    {
+        return foodId;
+    }
+
+    public void setFoodId(String foodId)
+    {
+        this.foodId = foodId;
     }
 
     public String getFoodName()

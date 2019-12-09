@@ -38,6 +38,7 @@ public class Login
         setContentView(R.layout.activity_login);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        getSupportActionBar().setTitle("Login");
 
         //  if (firebaseAuth.getCurrentUser() != null)
         //  {
@@ -47,10 +48,10 @@ public class Login
         //  }
 
 
-        buttonsignIn = (Button)findViewById(R.id.button);
-        editTextmail = (EditText)findViewById(R.id.email);
-        editTextPass = (EditText)findViewById(R.id.pass);
-        textView = (TextView)findViewById(R.id.textv);
+        buttonsignIn = findViewById(R.id.button);
+        editTextmail = findViewById(R.id.email);
+        editTextPass = findViewById(R.id.pass);
+        textView = findViewById(R.id.textv);
 
         buttonsignIn.setOnClickListener(this);
         textView.setOnClickListener(this);
@@ -59,7 +60,7 @@ public class Login
 
     }
 
-    private void userlogin()
+    private void userLogin()
     {
 
         String email = editTextmail.getText()
@@ -89,29 +90,23 @@ public class Login
 
 
         firebaseAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>()
-                    {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task)
+                    .addOnCompleteListener(this, task -> {
+                        progressDialog.dismiss();
+                        if (task.isSuccessful())
                         {
-                            progressDialog.dismiss();
-                            if (task.isSuccessful())
-                            {
-                                //Profile Activity will be here
-                                finish();
-                                Toast.makeText(Login.this, "Successfully SignIn", Toast.LENGTH_LONG)
-                                     .show();
-                                startActivity(
-                                        new Intent(getApplicationContext(), HomeActivity.class));
-
-                            }
-                            else
-                            {
-                                Toast.makeText(Login.this, "Couldn't SignIn", Toast.LENGTH_LONG)
-                                     .show();
-                            }
+                            //Profile Activity will be here
+                            Toast.makeText(Login.this, "Successfully SignIn", Toast.LENGTH_LONG)
+                                 .show();
+                            startActivity(
+                                    new Intent(getApplicationContext(), HomeActivity.class));
 
                         }
+                        else
+                        {
+                            Toast.makeText(Login.this, "Couldn't SignIn", Toast.LENGTH_LONG)
+                                 .show();
+                        }
+
                     });
 
     }
@@ -123,7 +118,7 @@ public class Login
         if (v == buttonsignIn)
         {
 
-            userlogin();
+            userLogin();
         }
         if (v == textView)
         {

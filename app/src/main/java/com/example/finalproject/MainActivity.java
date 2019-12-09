@@ -38,13 +38,14 @@ public class MainActivity
         setContentView(R.layout.activity_main);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        getSupportActionBar().setTitle("Sign Up");
 
-        if (firebaseAuth.getCurrentUser() != null)
-        {
-
-            finish();
-            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-        }
+//        if (firebaseAuth.getCurrentUser() != null)
+//        {
+//
+//            finish();
+//            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+//        }
 
 
         button = (Button)findViewById(R.id.button);
@@ -60,7 +61,6 @@ public class MainActivity
 
     private void RegisterUsr()
     {
-
         String email = editTextmail.getText()
                                    .toString()
                                    .trim();
@@ -121,7 +121,7 @@ public class MainActivity
         }
         if (v == textView)
         {
-
+            finish();
             startActivity(new Intent(this, Login.class));
         }
     }

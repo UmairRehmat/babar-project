@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -24,6 +25,8 @@ public class HomeActivity
     private RecyclerView recyclerView;
     private ProgressDialog progressDialog;
     private ArrayList<FoodDetails> mFoodDetailsList;
+    private FirebaseFirestore fireStore;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -32,15 +35,16 @@ public class HomeActivity
         setContentView(R.layout.activity_home);
         recyclerView = findViewById(R.id.food_recycler_view);
         progressDialog = new ProgressDialog(this);
+        getSupportActionBar().setTitle("Home");
         loadFoodData();
     }
 
     private void loadFoodData()
     {
-        progressDialog.setMessage("data loading.....");
+        progressDialog.setMessage("DATA LOADING !!!");
         progressDialog.show();
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        firestore.collection("food")
+        fireStore = FirebaseFirestore.getInstance();
+        fireStore.collection("food")
                  .get()
                  .addOnSuccessListener(queryDocumentSnapshots -> {
                      mFoodDetailsList = new ArrayList<>();
@@ -57,6 +61,9 @@ public class HomeActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
+        if (FirebaseAuth.getInstance()
+                        .getCurrentUser() == null)
+            return false;
         getMenuInflater().inflate(R.menu.goto_profile, menu);
         return true;
 
@@ -75,19 +82,36 @@ public class HomeActivity
     private void initializeRecyclerView()
     {
         FoodDetailsAdapter adapter = new FoodDetailsAdapter(mFoodDetailsList, HomeActivity.this,
-                                                            position -> {
-                                                                new AlertDialog.Builder(this)
-                                                                        .setMessage(
-                                                                                "order send for: " + mFoodDetailsList.get(
-                                                                                        position)
-                                                                                                                     .getFoodName())
-                                                                        .setTitle("order sent")
-                                                                        .setCancelable(false)
-                                                                        .setPositiveButton(
-                                                                                "ok", null)
-                                                                        .create()
-                                                                        .show();
-                                                            });
+                                                            position ->
+                                                                    new AlertDialog.Builder(this)
+                                                                            .setMessage(
+                                                                                    "ORDER SEND TO =  " + mFoodDetailsList.get(
+                                                                                            position)
+                                                                                                                          .getFoodName())
+                                                                            .setTitle("ORDER SENT")
+
+                                                                            .setCancelable(false)
+                                                                            .setPositiveButton(
+                                                                                    "OK", null)
+                                                                            .create()
+                                                                            .show(), position -> {
+            progressDialog.setMessage("Deleting...");
+            progressDialog.show();
+            fireStore.collection("food")
+                     .document(mFoodDetailsList.get(position)
+                                               .getFoodId())
+                     .delete()
+                     .addOnCompleteListener(task -> {
+                         if (task.isSuccessful())
+                         {
+                             progressDialog.dismiss();
+                             mFoodDetailsList.remove(position);
+                             initializeRecyclerView();
+                             Toast.makeText(this, "delete successful", Toast.LENGTH_SHORT)
+                                  .show();
+                         }
+                     });
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }

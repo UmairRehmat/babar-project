@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -21,12 +22,14 @@ public class FoodDetailsAdapter
     private ArrayList<FoodDetails> mFoodDetailsList;
     private Context mContext;
     private OnOrderClickListener listener;
+    private OnOrderClickListener dellListener;
 
-    public FoodDetailsAdapter(ArrayList<FoodDetails> mFoodDetailsList, Context mContext, OnOrderClickListener listener)
+    public FoodDetailsAdapter(ArrayList<FoodDetails> mFoodDetailsList, Context mContext, OnOrderClickListener listener, OnOrderClickListener dellListener)
     {
         this.mFoodDetailsList = mFoodDetailsList;
         this.mContext = mContext;
         this.listener = listener;
+        this.dellListener = dellListener;
     }
 
 
@@ -43,10 +46,16 @@ public class FoodDetailsAdapter
     @Override
     public void onBindViewHolder(@NonNull foodDetailsViewHolder holder, int position)
     {
+        if (FirebaseAuth.getInstance()
+                        .getCurrentUser() == null)
+            holder.delete.setVisibility(View.GONE);
+        else
+            holder.button.setVisibility(View.GONE);
+
         FoodDetails foodDetails = mFoodDetailsList.get(position);
-        holder.foodName.setText(foodDetails.getFoodName());
-        holder.foodPrice.setText(foodDetails.getPrice());
-        holder.contact.setText(foodDetails.getNumber());
+        holder.foodName.setText("Name: " + foodDetails.getFoodName());
+        holder.foodPrice.setText("Price: " + foodDetails.getPrice());
+        holder.contact.setText("Description: " + foodDetails.getNumber());
         Glide.with(mContext)
              .load(foodDetails.getImageUrl())
              .placeholder(R.drawable.ic_menu_gallery)
@@ -54,6 +63,10 @@ public class FoodDetailsAdapter
         holder.button.setOnClickListener(v -> {
             if (listener != null)
                 listener.onOrderButtonClick(position);
+        });
+        holder.delete.setOnClickListener(v -> {
+            if (dellListener != null)
+                dellListener.onOrderButtonClick(position);
         });
     }
 
@@ -71,6 +84,7 @@ public class FoodDetailsAdapter
         private TextView foodPrice;
         private TextView contact;
         private Button button;
+        private Button delete;
 
         public foodDetailsViewHolder(@NonNull View itemView)
         {
@@ -80,6 +94,7 @@ public class FoodDetailsAdapter
             foodPrice = itemView.findViewById(R.id.food_price);
             contact = itemView.findViewById(R.id.phone_number);
             button = itemView.findViewById(R.id.order);
+            delete = itemView.findViewById(R.id.delete);
         }
     }
 

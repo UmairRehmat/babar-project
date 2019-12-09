@@ -73,7 +73,8 @@ public class ProfileActivity
 
         chose_button = findViewById(R.id.chose_file);
         upload_button = findViewById(R.id.upload_image);
-        textView = findViewById(R.id.view_upload);
+        getSupportActionBar().setTitle("Add Menu");
+        textView = findViewById(R.id.view_upoad);
         progressBar = findViewById(R.id.progress_bar);
         mAuth = FirebaseAuth.getInstance();
         foodName = findViewById(R.id.food_name);
@@ -110,19 +111,7 @@ public class ProfileActivity
                 contact.requestFocus();
                 return;
             }
-            if (!contact.getText()
-                        .toString()
-                        .trim()
-                        .startsWith("03") && contact.getText()
-                                                    .toString()
-                                                    .trim()
-                                                    .length() < 11)
-            {
 
-                contact.setError("wrong number");
-                contact.requestFocus();
-                return;
-            }
             saveDataToFireBase();
 
         });
@@ -185,9 +174,11 @@ public class ProfileActivity
         progressDialog.setMessage("Uploading Data....");
         progressDialog.show();
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        FoodDetails foodDetails = new FoodDetails(foodName.getText()
-                                                          .toString()
-                                                          .trim(), mImageUploadUrl,
+        String foodId = UUID.randomUUID()
+                            .toString();
+        FoodDetails foodDetails = new FoodDetails(foodId, foodName.getText()
+                                                                  .toString()
+                                                                  .trim(), mImageUploadUrl,
                                                   firebaseAuth.getCurrentUser()
                                                               .getUid(), price.getText()
                                                                               .toString()
@@ -195,7 +186,8 @@ public class ProfileActivity
                                                   contact.getText()
                                                          .toString());
         firestore.collection("food")
-                 .add(foodDetails)
+                 .document(foodId)
+                 .set(foodDetails)
                  .addOnCompleteListener(task -> {
                      if (task.isSuccessful())
                      {

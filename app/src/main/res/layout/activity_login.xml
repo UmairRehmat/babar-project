@@ -1,43 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#85aaaaaa"
+    android:padding="20dp"
     tools:context=".Login">
 
-    <TextView
-        android:id="@+id/tt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SIGNIN" />
 
     <EditText
         android:id="@+id/email"
-        android:layout_width="357dp"
-        android:layout_height="61dp"
-        android:layout_below="@id/tt"
-        android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/edittext_background"
+        android:drawableStart="@drawable/mail"
+        android:drawablePadding="10dp"
         android:hint="Email"
-
-        />
+        android:padding="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/pass"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/pass"
-        android:layout_width="357dp"
-        android:layout_height="61dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_below="@+id/email"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/edittext_background"
+        android:drawableStart="@drawable/lock"
+        android:drawablePadding="10dp"
         android:hint="Password"
         android:inputType="textPassword"
+        android:padding="15dp"
 
-        />
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/pass"
-        android:text="LOGIN" />
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/rounded_button"
+        android:text="LOGIN"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/textv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <TextView
@@ -45,9 +58,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/button"
-        android:text="If Not Register !!! CLICK"
-        android:textSize="30dp"
-        tools:ignore="UnknownId" />
+        android:layout_marginBottom="165dp"
+        android:drawableStart="@drawable/new_user"
+        android:drawablePadding="10dp"
+        android:gravity="end"
+        android:text="New member? signup here"
+        android:textColor="#0E2DDD"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
