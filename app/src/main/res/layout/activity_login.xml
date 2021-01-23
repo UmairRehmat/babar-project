@@ -48,21 +48,31 @@
         android:text="LOGIN"
         android:textColor="#ffffff"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/textv"
+        app:layout_constraintBottom_toTopOf="@+id/signupButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-
+    <Button
+        android:id="@+id/signupButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/rounded_button"
+        android:text="SIGN UP"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/textv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
     <TextView
         android:id="@+id/textv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/button"
         android:layout_marginBottom="165dp"
-        android:drawableStart="@drawable/new_user"
         android:drawablePadding="10dp"
         android:gravity="end"
-        android:text="New member? signup here"
+        android:text="Forget Password? reset here"
         android:textColor="#0E2DDD"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"

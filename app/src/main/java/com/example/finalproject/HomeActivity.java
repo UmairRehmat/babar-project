@@ -24,8 +24,10 @@ public class HomeActivity
 {
     private RecyclerView recyclerView;
     private ProgressDialog progressDialog;
-    private ArrayList<FoodDetails> mFoodDetailsList;
+    private ArrayList<PropertyDetails> mPropertyDetailsList;
     private FirebaseFirestore fireStore;
+    private FirebaseAuth firebaseAuth;
+
 
 
     @Override
@@ -33,6 +35,7 @@ public class HomeActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        firebaseAuth = FirebaseAuth.getInstance();
         recyclerView = findViewById(R.id.food_recycler_view);
         progressDialog = new ProgressDialog(this);
         getSupportActionBar().setTitle("Home");
@@ -44,14 +47,14 @@ public class HomeActivity
         progressDialog.setMessage("DATA LOADING !!!");
         progressDialog.show();
         fireStore = FirebaseFirestore.getInstance();
-        fireStore.collection("food")
+        fireStore.collection("property_details")
                  .get()
                  .addOnSuccessListener(queryDocumentSnapshots -> {
-                     mFoodDetailsList = new ArrayList<>();
+                     mPropertyDetailsList = new ArrayList<>();
                      for (DocumentSnapshot childData : queryDocumentSnapshots)
                      {
-                         FoodDetails foodDetails = childData.toObject(FoodDetails.class);
-                         mFoodDetailsList.add(foodDetails);
+                         PropertyDetails propertyDetails = childData.toObject(PropertyDetails.class);
+                         mPropertyDetailsList.add(propertyDetails);
                      }
                      progressDialog.dismiss();
                      initializeRecyclerView();
@@ -72,20 +75,25 @@ public class HomeActivity
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item)
     {
-        if (item.getItemId() == R.id.add_profile)
+        if (item.getItemId() == R.id.add_profile) {
             finish();
-        startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+            startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+        }
+        else  if (item.getItemId() == R.id.logout)
+        {
+            logoutUser();
+        }
         return super.onOptionsItemSelected(item);
     }
 
 
     private void initializeRecyclerView()
     {
-        FoodDetailsAdapter adapter = new FoodDetailsAdapter(mFoodDetailsList, HomeActivity.this,
+        FoodDetailsAdapter adapter = new FoodDetailsAdapter(mPropertyDetailsList, HomeActivity.this,
                                                             position ->
                                                                     new AlertDialog.Builder(this)
                                                                             .setMessage(
-                                                                                    "ORDER SEND TO =  " + mFoodDetailsList.get(
+                                                                                    "ORDER SEND TO =  " + mPropertyDetailsList.get(
                                                                                             position)
                                                                                                                           .getFoodName())
                                                                             .setTitle("ORDER SENT")
@@ -97,15 +105,15 @@ public class HomeActivity
                                                                             .show(), position -> {
             progressDialog.setMessage("Deleting...");
             progressDialog.show();
-            fireStore.collection("food")
-                     .document(mFoodDetailsList.get(position)
+            fireStore.collection("property_details")
+                     .document(mPropertyDetailsList.get(position)
                                                .getFoodId())
                      .delete()
                      .addOnCompleteListener(task -> {
                          if (task.isSuccessful())
                          {
                              progressDialog.dismiss();
-                             mFoodDetailsList.remove(position);
+                             mPropertyDetailsList.remove(position);
                              initializeRecyclerView();
                              Toast.makeText(this, "delete successful", Toast.LENGTH_SHORT)
                                   .show();
@@ -114,6 +122,12 @@ public class HomeActivity
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+    }
+
+    private void logoutUser() {
+        firebaseAuth.signOut();
+        finish();
+        startActivity(new Intent(this, Login.class));
     }
 
 }

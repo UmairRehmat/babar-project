@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,9 +11,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -25,6 +22,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,17 +31,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
-import java.net.URI;
 import java.util.UUID;
-import java.util.zip.Inflater;
 
 public class ProfileActivity
-        extends AppCompatActivity
-        implements View.OnClickListener
-{
+        extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
-    private Button buttonlogout;
     private FirebaseUser FirebaseUser;
 
     private static final int pick_image_request = 1;
@@ -56,7 +49,9 @@ public class ProfileActivity
     private FirebaseAuth mAuth;
     private EditText foodName;
     private EditText price;
-    private EditText contact;
+    private EditText description;
+    private EditText location;
+    private EditText phoneNumber;
     private Button saveData;
     private ProgressDialog progressDialog;
 
@@ -65,8 +60,7 @@ public class ProfileActivity
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
@@ -79,36 +73,48 @@ public class ProfileActivity
         mAuth = FirebaseAuth.getInstance();
         foodName = findViewById(R.id.food_name);
         price = findViewById(R.id.food_price);
+        location = findViewById(R.id.location);
         saveData = findViewById(R.id.save_data);
-        contact = findViewById(R.id.phone_number);
+        description = findViewById(R.id.property_description);
+        phoneNumber = findViewById(R.id.phone_number);
         progressDialog = new ProgressDialog(this);
         saveData.setOnClickListener(v -> {
-            if (mImageUploadUrl == null)
-            {
+            if (mImageUploadUrl == null) {
                 Toast.makeText(this, "upload image first", Toast.LENGTH_SHORT)
-                     .show();
+                        .show();
                 return;
             }
             if (TextUtils.isEmpty(foodName.getText()
-                                          .toString()))
-            {
+                    .toString())) {
                 foodName.setError("required");
                 foodName.requestFocus();
                 return;
             }
             if (TextUtils.isEmpty(price.getText()
-                                       .toString()))
-            {
+                    .toString())) {
                 price.setError("required");
                 price.requestFocus();
                 return;
             }
-            if (TextUtils.isEmpty(contact.getText()
-                                         .toString()))
-            {
+            if (TextUtils.isEmpty(description.getText()
+                    .toString())) {
 
-                contact.setError("required");
-                contact.requestFocus();
+                description.setError("required");
+                description.requestFocus();
+                return;
+            }
+            if (TextUtils.isEmpty(location.getText()
+                    .toString())) {
+
+                location.setError("required");
+                location.requestFocus();
+                return;
+            }
+            if (TextUtils.isEmpty(phoneNumber.getText()
+                    .toString())) {
+
+                phoneNumber.setError("required");
+                phoneNumber.requestFocus();
                 return;
             }
 
@@ -119,20 +125,19 @@ public class ProfileActivity
         chose_button.setOnClickListener(v -> pickImage());
 
         upload_button.setOnClickListener(v -> {
-            if (image_uri == null)
-            {
+            if (image_uri == null) {
                 Toast.makeText(ProfileActivity.this, "select image first", Toast.LENGTH_SHORT)
-                     .show();
+                        .show();
                 return;
             }
             progressDialog.setMessage("image uploading.......");
             progressDialog.show();
             GetImageUrl(image_uri, mAuth.getCurrentUser()
-                                        .getUid(), Url -> {
+                    .getUid(), Url -> {
                 progressDialog.dismiss();
                 mImageUploadUrl = Url;
                 Toast.makeText(ProfileActivity.this, "upload successfully", Toast.LENGTH_SHORT)
-                     .show();
+                        .show();
             });
         });
 
@@ -142,76 +147,73 @@ public class ProfileActivity
 
 
         firebaseAuth = FirebaseAuth.getInstance();
-        if (firebaseAuth.getCurrentUser() == null)
-        {
+        if (firebaseAuth.getCurrentUser() == null) {
 
             finish();
             startActivity(new Intent(this, Login.class));
         }
         FirebaseUser = firebaseAuth.getCurrentUser();
 
-        buttonlogout = (Button)findViewById(R.id.logout);
-        buttonlogout.setOnClickListener(this);
 
     }
 
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
         progressDialog.dismiss();
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
         progressDialog = new ProgressDialog(this);
     }
 
-    private void saveDataToFireBase()
-    {
+    private void saveDataToFireBase() {
         progressDialog.setMessage("Uploading Data....");
         progressDialog.show();
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         String foodId = UUID.randomUUID()
-                            .toString();
-        FoodDetails foodDetails = new FoodDetails(foodId, foodName.getText()
-                                                                  .toString()
-                                                                  .trim(), mImageUploadUrl,
-                                                  firebaseAuth.getCurrentUser()
-                                                              .getUid(), price.getText()
-                                                                              .toString()
-                                                                              .trim(),
-                                                  contact.getText()
-                                                         .toString());
-        firestore.collection("food")
-                 .document(foodId)
-                 .set(foodDetails)
-                 .addOnCompleteListener(task -> {
-                     if (task.isSuccessful())
-                     {
-                         progressDialog.dismiss();
-                         Toast.makeText(this, "uploaded successfully", Toast.LENGTH_SHORT)
-                              .show();
-                         finish();
-                         startActivity(new Intent(ProfileActivity.this, HomeActivity.class));
-                     }
-                 });
+                .toString();
+        PropertyDetails propertyDetails = new PropertyDetails(foodId, foodName.getText()
+                .toString()
+                .trim(), mImageUploadUrl,
+                firebaseAuth.getCurrentUser()
+                        .getUid(), price.getText()
+                .toString()
+                .trim(),
+                description.getText()
+                        .toString(), location.getText().toString(), firebaseAuth.getCurrentUser().getEmail(), phoneNumber.getText().toString());
+        firestore.collection("property_details")
+                .document(foodId)
+                .set(propertyDetails)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        progressDialog.dismiss();
+                        Toast.makeText(this, "uploaded successfully", Toast.LENGTH_SHORT)
+                                .show();
+                        finish();
+                        startActivity(new Intent(ProfileActivity.this, HomeActivity.class));
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressDialog.dismiss();
+                Toast.makeText(ProfileActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.go_home, menu);
         return true;
 
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.home_menu)
             finish();
         startActivity(new Intent(ProfileActivity.this, HomeActivity.class));
@@ -219,40 +221,23 @@ public class ProfileActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (ImagePicker.shouldHandle(requestCode, resultCode, data))
-        {
+        if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             Image image = ImagePicker.getFirstImageOrNull(data);
-            if (image != null)
-            {
+            if (image != null) {
                 image_uri = Uri.fromFile(new File(image.getPath()));
                 Glide.with(this)
-                     .load(image_uri.toString())
-                     .into(chose_button);
+                        .load(image_uri.toString())
+                        .into(chose_button);
             }
         }
     }
 
-    private void pickImage()
-    {
+    private void pickImage() {
         ImagePicker.create(this)
-                   .single()
-                   .start();
-    }
-
-    @Override
-    public void onClick(View v)
-    {
-
-        if (v == buttonlogout)
-
-        {
-            firebaseAuth.signOut();
-            finish();
-            startActivity(new Intent(this, Login.class));
-        }
+                .single()
+                .start();
     }
 
     //****************************************************************************************************
@@ -260,38 +245,36 @@ public class ProfileActivity
     //****************************************************************************************************
     {
         String imageId = UUID.randomUUID()
-                             .toString();
+                .toString();
         StorageReference storageReference = FirebaseStorage.getInstance()
-                                                           .getReference(
-                                                                   "userPhotos/food/photos/" + userId + "/" + imageId);
+                .getReference(
+                        "userPhotos/food/photos/" + userId + "/" + imageId);
 
         StorageReference filePath = storageReference.child(userId);
         Task<Uri> uriTask = filePath.putFile(imageURI)
-                                    .continueWithTask(
-                                            task -> {
-                                                if (!task.isSuccessful())
-                                                {
-                                                    Toast.makeText(ProfileActivity.this,
-                                                                   task.getException()
-                                                                       .getLocalizedMessage(),
-                                                                   Toast.LENGTH_SHORT)
-                                                         .show();
-                                                    throw task.getException();
-                                                }
-                                                return filePath.getDownloadUrl();
-                                            })
-                                    .addOnCompleteListener(task -> {
-                                        if (task.isSuccessful())
-                                        {
-                                            Uri mImageIntentURI = task.getResult();
-                                            if (listener == null)
-                                                return;
-                                            listener.onImageUploaded(mImageIntentURI.toString());
-                                            //   Log.d(TAG, "onComplete: Url: " + downUri.toString());
-                                        }
-                                    })
-                                    .addOnFailureListener(
-                                            e -> Log.d("reeeerr", e.getLocalizedMessage()));
+                .continueWithTask(
+                        task -> {
+                            if (!task.isSuccessful()) {
+                                Toast.makeText(ProfileActivity.this,
+                                        task.getException()
+                                                .getLocalizedMessage(),
+                                        Toast.LENGTH_SHORT)
+                                        .show();
+                                throw task.getException();
+                            }
+                            return filePath.getDownloadUrl();
+                        })
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Uri mImageIntentURI = task.getResult();
+                        if (listener == null)
+                            return;
+                        listener.onImageUploaded(mImageIntentURI.toString());
+                        //   Log.d(TAG, "onComplete: Url: " + downUri.toString());
+                    }
+                })
+                .addOnFailureListener(
+                        e -> Log.d("reeeerr", e.getLocalizedMessage()));
 
     }
 }

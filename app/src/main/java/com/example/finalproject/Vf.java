@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -27,10 +28,25 @@ public class Vf
         setContentView(R.layout.activity_vf);
 
         new Handler().postDelayed(() -> {
-            Intent intent = new Intent(Vf.this, FirstActivity.class);
-            startActivity(intent);
+            if (FirebaseAuth.getInstance()
+                    .getCurrentUser() ==null) {
+                Intent intent = new Intent(Vf.this, FirstActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+            else
+            {
+             openRecylerView();
+            }
             finish();
         }, splash_time);
+    }
+    public void openRecylerView()
+    {
+
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
 }

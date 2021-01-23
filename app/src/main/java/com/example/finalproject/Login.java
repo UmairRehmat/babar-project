@@ -24,6 +24,7 @@ public class Login
 {
 
     private Button buttonsignIn;
+    private Button buttonSignUp;
     private EditText editTextmail;
     private EditText editTextPass;
     private TextView textView;
@@ -49,12 +50,14 @@ public class Login
 
 
         buttonsignIn = findViewById(R.id.button);
+        buttonSignUp = findViewById(R.id.signupButton);
         editTextmail = findViewById(R.id.email);
         editTextPass = findViewById(R.id.pass);
         textView = findViewById(R.id.textv);
 
         buttonsignIn.setOnClickListener(this);
         textView.setOnClickListener(this);
+        buttonSignUp.setOnClickListener(this);
 
         progressDialog = new ProgressDialog(this);
 
@@ -103,7 +106,7 @@ public class Login
                         }
                         else
                         {
-                            Toast.makeText(Login.this, "Couldn't SignIn", Toast.LENGTH_LONG)
+                            Toast.makeText(Login.this, "Couldn't SignIn"+task.getException().getLocalizedMessage(), Toast.LENGTH_LONG)
                                  .show();
                         }
 
@@ -123,6 +126,10 @@ public class Login
         if (v == textView)
         {
 
+
+        }
+        if (v==buttonSignUp)
+        {
             finish();
             startActivity(new Intent(this, MainActivity.class));
         }

@@ -19,14 +19,14 @@ import androidx.recyclerview.widget.RecyclerView;
 public class FoodDetailsAdapter
         extends RecyclerView.Adapter<FoodDetailsAdapter.foodDetailsViewHolder>
 {
-    private ArrayList<FoodDetails> mFoodDetailsList;
+    private ArrayList<PropertyDetails> mPropertyDetailsList;
     private Context mContext;
     private OnOrderClickListener listener;
     private OnOrderClickListener dellListener;
 
-    public FoodDetailsAdapter(ArrayList<FoodDetails> mFoodDetailsList, Context mContext, OnOrderClickListener listener, OnOrderClickListener dellListener)
+    public FoodDetailsAdapter(ArrayList<PropertyDetails> mPropertyDetailsList, Context mContext, OnOrderClickListener listener, OnOrderClickListener dellListener)
     {
-        this.mFoodDetailsList = mFoodDetailsList;
+        this.mPropertyDetailsList = mPropertyDetailsList;
         this.mContext = mContext;
         this.listener = listener;
         this.dellListener = dellListener;
@@ -46,18 +46,16 @@ public class FoodDetailsAdapter
     @Override
     public void onBindViewHolder(@NonNull foodDetailsViewHolder holder, int position)
     {
+        PropertyDetails propertyDetails = mPropertyDetailsList.get(position);
         if (FirebaseAuth.getInstance()
-                        .getCurrentUser() == null)
+                        .getCurrentUser() == null || !FirebaseAuth.getInstance().getCurrentUser().getEmail().equals(propertyDetails.getOwnerEmail()))
             holder.delete.setVisibility(View.GONE);
-        else
-            holder.button.setVisibility(View.GONE);
 
-        FoodDetails foodDetails = mFoodDetailsList.get(position);
-        holder.foodName.setText("Name: " + foodDetails.getFoodName());
-        holder.foodPrice.setText("Price: " + foodDetails.getPrice());
-        holder.contact.setText("Description: " + foodDetails.getNumber());
+        holder.foodName.setText(  propertyDetails.getFoodName());
+        holder.foodPrice.setText( propertyDetails.getPrice());
+        holder.contact.setText( propertyDetails.getLocation());
         Glide.with(mContext)
-             .load(foodDetails.getImageUrl())
+             .load(propertyDetails.getImageUrl())
              .placeholder(R.drawable.ic_menu_gallery)
              .into(holder.foodImage);
         holder.button.setOnClickListener(v -> {
@@ -73,7 +71,7 @@ public class FoodDetailsAdapter
     @Override
     public int getItemCount()
     {
-        return mFoodDetailsList.size();
+        return mPropertyDetailsList.size();
     }
 
     public class foodDetailsViewHolder
@@ -92,7 +90,7 @@ public class FoodDetailsAdapter
             foodImage = itemView.findViewById(R.id.food_image);
             foodName = itemView.findViewById(R.id.food_name);
             foodPrice = itemView.findViewById(R.id.food_price);
-            contact = itemView.findViewById(R.id.phone_number);
+            contact = itemView.findViewById(R.id.property_description);
             button = itemView.findViewById(R.id.order);
             delete = itemView.findViewById(R.id.delete);
         }
