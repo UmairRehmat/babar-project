@@ -2,12 +2,17 @@ package com.example.finalproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +27,7 @@ import java.util.ArrayList;
 public class HomeActivity
         extends AppCompatActivity
 {
+    private static final int REQUEST_PHONE_CALL = 113;
     private RecyclerView recyclerView;
     private ProgressDialog progressDialog;
     private ArrayList<PropertyDetails> mPropertyDetailsList;
@@ -90,19 +96,7 @@ public class HomeActivity
     private void initializeRecyclerView()
     {
         FoodDetailsAdapter adapter = new FoodDetailsAdapter(mPropertyDetailsList, HomeActivity.this,
-                                                            position ->
-                                                                    new AlertDialog.Builder(this)
-                                                                            .setMessage(
-                                                                                    "ORDER SEND TO =  " + mPropertyDetailsList.get(
-                                                                                            position)
-                                                                                                                          .getFoodName())
-                                                                            .setTitle("ORDER SENT")
-
-                                                                            .setCancelable(false)
-                                                                            .setPositiveButton(
-                                                                                    "OK", null)
-                                                                            .create()
-                                                                            .show(), position -> {
+                                                            position ->makePhoneCall(mPropertyDetailsList.get(position).getPhoneNumber()), position -> {
             progressDialog.setMessage("Deleting...");
             progressDialog.show();
             fireStore.collection("property_details")
@@ -130,4 +124,41 @@ public class HomeActivity
         startActivity(new Intent(this, Login.class));
     }
 
+    private void makePhoneCall(String phoneNumber)
+    {
+        Intent intent = new Intent(
+                Intent.ACTION_CALL);
+        intent.setData(Uri.parse(
+                "tel:" +
+                        phoneNumber));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            if (this
+                    .checkSelfPermission(
+                            Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED)
+            {
+                if (intent.resolveActivity(
+                        this
+                                .getPackageManager()) != null)
+                {
+                    startActivity(
+                            intent);
+                }
+                else
+                {
+                    Toast.makeText(this, "Facility not available", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else
+            {
+                Toast.makeText(this, "Permission Not Given", Toast.LENGTH_SHORT).show();
+
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[] { Manifest.permission.CALL_PHONE },
+                        REQUEST_PHONE_CALL);
+
+            }
+        }
+    }
 }
