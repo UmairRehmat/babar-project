@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,13 +24,16 @@ public class FoodDetailsAdapter
     private Context mContext;
     private OnOrderClickListener listener;
     private OnOrderClickListener dellListener;
+    private OnOrderClickListener whatsappListener;
 
-    public FoodDetailsAdapter(ArrayList<PropertyDetails> mPropertyDetailsList, Context mContext, OnOrderClickListener listener, OnOrderClickListener dellListener)
+    public FoodDetailsAdapter(ArrayList<PropertyDetails> mPropertyDetailsList, Context mContext, OnOrderClickListener listener, OnOrderClickListener dellListener,OnOrderClickListener whatsappListener)
     {
         this.mPropertyDetailsList = mPropertyDetailsList;
         this.mContext = mContext;
         this.listener = listener;
         this.dellListener = dellListener;
+        this.whatsappListener = whatsappListener;
+
     }
 
 
@@ -49,7 +53,7 @@ public class FoodDetailsAdapter
         PropertyDetails propertyDetails = mPropertyDetailsList.get(position);
         if (FirebaseAuth.getInstance()
                         .getCurrentUser() == null || !FirebaseAuth.getInstance().getCurrentUser().getEmail().equals(propertyDetails.getOwnerEmail()))
-            holder.delete.setVisibility(View.GONE);
+            holder.deleteCon.setVisibility(View.GONE);
 
         holder.foodName.setText(  propertyDetails.getFoodName());
         holder.foodPrice.setText( propertyDetails.getPrice());
@@ -66,6 +70,10 @@ public class FoodDetailsAdapter
             if (dellListener != null)
                 dellListener.onOrderButtonClick(position);
         });
+        holder.whatsapp.setOnClickListener(v -> {
+            if (whatsappListener != null)
+                whatsappListener.onOrderButtonClick(position);
+        });
     }
 
     @Override
@@ -81,8 +89,10 @@ public class FoodDetailsAdapter
         private TextView foodName;
         private TextView foodPrice;
         private TextView contact;
-        private Button button;
-        private Button delete;
+        private ImageView button;
+        private ImageView delete;
+        private ImageView whatsapp;
+        private FrameLayout deleteCon;
 
         public foodDetailsViewHolder(@NonNull View itemView)
         {
@@ -93,6 +103,8 @@ public class FoodDetailsAdapter
             contact = itemView.findViewById(R.id.property_description);
             button = itemView.findViewById(R.id.order);
             delete = itemView.findViewById(R.id.delete);
+            whatsapp = itemView.findViewById(R.id.whatsapp);
+            deleteCon = itemView.findViewById(R.id.delete_con);
         }
     }
 

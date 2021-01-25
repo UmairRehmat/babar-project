@@ -125,8 +125,8 @@ public class Login
         }
         if (v == textView)
         {
-
-
+            finish();
+            startActivity(new Intent(this, ForgortPasswordActivity.class));
         }
         if (v==buttonSignUp)
         {

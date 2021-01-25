@@ -16,6 +16,7 @@
         android:background="@drawable/edittext_background"
         android:drawableStart="@drawable/mail"
         android:drawablePadding="10dp"
+        android:singleLine="true"
         android:hint="Email"
         android:padding="10dp"
 
@@ -26,6 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@+id/email"
+        android:singleLine="true"
         android:layout_marginTop="15dp"
         android:background="@drawable/edittext_background"
         android:drawableStart="@drawable/lock"
@@ -45,7 +47,7 @@
         android:background="@drawable/rounded_button"
         android:text="sign up"
         android:textColor="#ffff"
-        android:textSize="24sp" />
+        android:textSize="20sp" />
 
 
     <TextView

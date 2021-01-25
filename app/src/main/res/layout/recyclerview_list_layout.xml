@@ -13,54 +13,57 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="129dp">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/food_image"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
             android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/avatars" />
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/food_image"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/food_image">
 
-            <TextView
-                android:id="@+id/food_name"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="@android:color/black"
-                android:singleLine="true"
-                android:layout_marginTop="5dp"
-                android:text="TextView" />
+                android:orientation="horizontal">
 
-            <TextView
+                <TextView
+                    android:id="@+id/food_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:singleLine="true"
+                    android:text="TextView"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                android:id="@+id/food_price"
-                android:layout_width="match_parent"
-                android:singleLine="true"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_money_24"
-                android:drawablePadding="5dp"
-                android:layout_marginTop="5dp"
-                android:text="PRICE : "
-
-
-                />
+                <TextView
+                    android:id="@+id/food_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:drawableStart="@drawable/ic_money_24"
+                    android:drawablePadding="5dp"
+                    android:singleLine="true"
+                    android:text="PRICE : " />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/property_description"
@@ -68,40 +71,56 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:drawableStart="@drawable/ic_location"
-                android:singleLine="true"
                 android:drawablePadding="5dp"
+                android:singleLine="true"
                 android:text="TextView" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
+                android:layout_marginBottom="8dp"
                 android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/order"
+                <FrameLayout
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_weight="1.5"
-                    android:background="@drawable/order_button"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:text="Call"
-                    android:textColor="#ffffff" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
-                <Button
-                    android:id="@+id/delete"
+                    <ImageView
+                        android:id="@+id/order"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/telephone" />
+                </FrameLayout>
+
+                <FrameLayout
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/order_delete"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:text="delete"
-                    android:textColor="#ffffff" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:id="@+id/whatsapp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/whatsapp" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/delete_con"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:id="@+id/delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/delete" />
+                </FrameLayout>
             </LinearLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

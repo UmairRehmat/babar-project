@@ -51,6 +51,7 @@ public class HomeActivity
     private void loadFoodData()
     {
         progressDialog.setMessage("DATA LOADING !!!");
+        progressDialog.setCancelable(false);
         progressDialog.show();
         fireStore = FirebaseFirestore.getInstance();
         fireStore.collection("property_details")
@@ -98,6 +99,7 @@ public class HomeActivity
         FoodDetailsAdapter adapter = new FoodDetailsAdapter(mPropertyDetailsList, HomeActivity.this,
                                                             position ->makePhoneCall(mPropertyDetailsList.get(position).getPhoneNumber()), position -> {
             progressDialog.setMessage("Deleting...");
+            progressDialog.setCancelable(false);
             progressDialog.show();
             fireStore.collection("property_details")
                      .document(mPropertyDetailsList.get(position)
@@ -113,11 +115,45 @@ public class HomeActivity
                                   .show();
                          }
                      });
+        },position -> {
+whatsAppAction(mPropertyDetailsList.get(position).getPhoneNumber());
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
 
+    private void whatsAppAction(String phoneNumber) {
+        if (phoneNumber.startsWith("0"))
+            phoneNumber.substring(1);
+        boolean installed = appInstalledOrNot("com.whatsapp");
+        if (installed)
+        {
+            Uri uri = Uri.parse(
+                    "https://wa.me/92"+(phoneNumber.startsWith("0")?phoneNumber.substring(1):phoneNumber)+"?text=Hello!"); // missing 'http://' will cause crashed
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(this, "Whatsapp is not installed", Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+    private boolean appInstalledOrNot(String uri)
+    {
+        PackageManager pm = this.getPackageManager();
+        boolean app_installed;
+        try
+        {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            app_installed = true;
+        }
+        catch (PackageManager.NameNotFoundException e)
+        {
+            app_installed = false;
+        }
+        return app_installed;
+    }
     private void logoutUser() {
         firebaseAuth.signOut();
         finish();

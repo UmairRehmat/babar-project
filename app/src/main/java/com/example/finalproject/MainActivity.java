@@ -98,6 +98,8 @@ public class MainActivity
                                                Toast.LENGTH_LONG)
                                      .show();
                                 finish();
+                                startActivity(new Intent(MainActivity.this, HomeActivity.class));
+
                             }
                             else
                             {

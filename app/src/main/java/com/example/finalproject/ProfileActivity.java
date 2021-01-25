@@ -131,6 +131,7 @@ public class ProfileActivity
                 return;
             }
             progressDialog.setMessage("image uploading.......");
+            progressDialog.setCancelable(false);
             progressDialog.show();
             GetImageUrl(image_uri, mAuth.getCurrentUser()
                     .getUid(), Url -> {
@@ -171,6 +172,7 @@ public class ProfileActivity
 
     private void saveDataToFireBase() {
         progressDialog.setMessage("Uploading Data....");
+        progressDialog.setCancelable(false);
         progressDialog.show();
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         String foodId = UUID.randomUUID()
