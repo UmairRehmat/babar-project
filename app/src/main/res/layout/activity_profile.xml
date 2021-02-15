@@ -100,15 +100,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/food_price" />
 
-        <EditText
+        <TextView
             android:id="@+id/location"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
-            android:singleLine="true"
             android:background="@drawable/edittext_background"
-            android:hint="Property Location"
+            android:text="Property Location"
             android:paddingStart="10dp"
+            android:textColor="#000"
+            android:paddingEnd="10dp"
+            android:gravity="center|start"
+            android:drawableEnd="@drawable/ic_location"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/property_description" />

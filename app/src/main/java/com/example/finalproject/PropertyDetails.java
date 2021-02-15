@@ -1,5 +1,7 @@
 package com.example.finalproject;
 
+import com.google.firebase.firestore.GeoPoint;
+
 public class PropertyDetails {
     private String foodId;
 
@@ -12,8 +14,17 @@ public class PropertyDetails {
     private String location;
     private String ownerEmail;
     private String phoneNumber;
+    private GeoPoint geoPoint;
 
-    public PropertyDetails(String foodId, String foodName, String imageUrl, String postedBy, String price, String number, String location, String ownerEmail, String phoneNumber) {
+    public GeoPoint getGeoPoint() {
+        return geoPoint;
+    }
+
+    public void setGeoPoint(GeoPoint geoPoint) {
+        this.geoPoint = geoPoint;
+    }
+
+    public PropertyDetails(String foodId, String foodName, String imageUrl, String postedBy, String price, String number, String location, String ownerEmail, String phoneNumber, GeoPoint geoPoint) {
         this.foodId = foodId;
         this.foodName = foodName;
         this.imageUrl = imageUrl;
@@ -23,7 +34,10 @@ public class PropertyDetails {
         this.location = location;
         this.ownerEmail = ownerEmail;
         this.phoneNumber = phoneNumber;
+        this.geoPoint = geoPoint;
     }
+
+
 
     public String getPhoneNumber() {
         return phoneNumber;

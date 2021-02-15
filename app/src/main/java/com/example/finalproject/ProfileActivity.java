@@ -3,15 +3,29 @@ package com.example.finalproject;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,18 +38,33 @@ import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.schibstedspain.leku.LocationPickerActivity;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
+
+import io.nlopez.smartlocation.SmartLocation;
+
+import static android.provider.ContactsContract.CommonDataKinds.Email.ADDRESS;
+import static android.provider.MediaStore.Video.VideoColumns.LATITUDE;
+import static android.provider.MediaStore.Video.VideoColumns.LONGITUDE;
 
 public class ProfileActivity
         extends AppCompatActivity {
 
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 121;
+    private static final int RESULT_CODE_LOCATION = 122;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser FirebaseUser;
 
@@ -50,13 +79,14 @@ public class ProfileActivity
     private EditText foodName;
     private EditText price;
     private EditText description;
-    private EditText location;
+    private TextView location;
     private EditText phoneNumber;
     private Button saveData;
     private ProgressDialog progressDialog;
 
 
     private Uri image_uri;
+    private GeoPoint mGeoPointLocation;
 
 
     @Override
@@ -104,7 +134,7 @@ public class ProfileActivity
                 return;
             }
             if (TextUtils.isEmpty(location.getText()
-                    .toString())) {
+                    .toString())|| location.getText().equals("Property Location")) {
 
                 location.setError("required");
                 location.requestFocus();
@@ -121,7 +151,9 @@ public class ProfileActivity
             saveDataToFireBase();
 
         });
-
+        location.setOnClickListener(view -> {
+            takeGoogleMapPermission();
+        });
         chose_button.setOnClickListener(v -> pickImage());
 
         upload_button.setOnClickListener(v -> {
@@ -164,6 +196,97 @@ public class ProfileActivity
         progressDialog.dismiss();
     }
 
+    //************************************************************************************
+    public  void takeGoogleMapPermission()
+    //************************************************************************************
+    {
+        int MyVersion = Build.VERSION.SDK_INT;
+
+        if (ContextCompat.checkSelfPermission(ProfileActivity.this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1)
+        {
+            ActivityCompat.requestPermissions(ProfileActivity.this,
+                    new String[] { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, },
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+            return;
+        }
+        if (!getGPSStatus())
+        {
+            showGPSSnackBar(
+                    getWindow()
+                            .getDecorView()
+                            .getRootView(),
+                    ProfileActivity.this);
+            return;
+        }
+        progressDialog.show();
+        openLocationPickerScreen();
+
+    }
+
+
+    //**************************************************************
+    private void openLocationPickerScreen()
+    //**************************************************************
+    {
+        SmartLocation.with(ProfileActivity.this)
+                .location()
+                .start(location -> {
+                    Intent locationPickerIntent = new LocationPickerActivity.Builder()
+                            .withLocation(location.getLatitude(),
+                                    location.getLongitude())
+                            .withGeolocApiKey(getString(R.string.google_maps_key))
+                            .shouldReturnOkOnBackPressed()
+                            .withSatelliteViewHidden()
+                            .withGooglePlacesEnabled()
+                            .withSearchZone("en_PK")
+//                            .withGoogleTimeZoneEnabled()
+                            .build(ProfileActivity.this);
+
+                    progressDialog.dismiss();
+                    startActivityForResult(locationPickerIntent, RESULT_CODE_LOCATION);
+                });
+    }
+    //************************************************************************************
+    public void showGPSSnackBar(View view, Activity activity)
+    //************************************************************************************
+    {
+        Snackbar snackbar = Snackbar
+                .make(view, getString(R.string.location_disable), Snackbar.LENGTH_LONG)
+                .setAction(getString(R.string.action_settings),
+                        new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View view)
+                            {
+                                Intent intent1 = new Intent(
+                                        Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                activity.startActivity(intent1);
+
+                            }
+                        });
+
+        // Changing message text color
+        snackbar.setActionTextColor(Color.RED);
+
+        // Changing action button text color
+        View sbView = snackbar.getView();
+        TextView textView = new TextView(activity);
+        textView.setTextColor(Color.YELLOW);
+
+        snackbar.show();
+
+    }
+    //******************************************************************
+    public boolean getGPSStatus()
+    //******************************************************************
+    {
+        LocationManager locationManager;
+        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -185,7 +308,7 @@ public class ProfileActivity
                 .toString()
                 .trim(),
                 description.getText()
-                        .toString(), location.getText().toString(), firebaseAuth.getCurrentUser().getEmail(), phoneNumber.getText().toString());
+                        .toString(), location.getText().toString(), firebaseAuth.getCurrentUser().getEmail(), phoneNumber.getText().toString(),mGeoPointLocation);
         firestore.collection("property_details")
                 .document(foodId)
                 .set(propertyDetails)
@@ -232,6 +355,41 @@ public class ProfileActivity
                 Glide.with(this)
                         .load(image_uri.toString())
                         .into(chose_button);
+            }
+        }
+        Log.d("RESULT1****", resultCode+"");
+        if (resultCode == Activity.RESULT_OK && data != null)
+        {
+            Log.d("RESULT****", "OK");
+            if (requestCode == RESULT_CODE_LOCATION)
+            {
+                double latitude = data.getDoubleExtra(LATITUDE, 0.0);
+                Log.d("LATITUDE****", "" + latitude);
+                double longitude = data.getDoubleExtra(LONGITUDE, 0.0);
+                Log.d("LONGITUDE****", "" + longitude);
+                mGeoPointLocation = new GeoPoint(latitude, longitude);
+                Geocoder geocoder;
+                List<Address> addresses = new ArrayList<>();
+                geocoder = new Geocoder(ProfileActivity.this, Locale.getDefault());
+
+                try
+                {
+                    addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                String address = addresses.get(0)
+                        .getAddressLine(0);
+                location.setText(address);
+                Log.d("ADDRESS****", address.toString());
+
+                Parcelable[] fullAddress = data.getParcelableArrayExtra(ADDRESS);
+                if (fullAddress != null)
+                {
+                    Log.d("FULL ADDRESS****", fullAddress.toString());
+                }
             }
         }
     }
