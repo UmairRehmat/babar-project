@@ -58,7 +58,7 @@ public class PropertyDetailsAdapter
         holder.contact.setText( propertyDetails.getLocation());
         Glide.with(mContext)
              .load(propertyDetails.getImageUrl().get(0))
-             .placeholder(R.drawable.ic_menu_gallery)
+             .placeholder(R.drawable.imager_loader)
              .into(holder.foodImage);
         holder.button.setOnClickListener(v -> {
             if (listener != null)

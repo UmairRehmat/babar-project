@@ -3,6 +3,7 @@ package com.example.finalproject;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -44,10 +45,26 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void setData() {
-        Glide.with(DetailsActivity.this)
-                .load(mPropertyDetails.getImageUrl().get(0))
-                .placeholder(R.drawable.ic_menu_gallery)
-                .into(mBinding.image);
+        SliderAdapter adapter = new SliderAdapter(DetailsActivity.this,mPropertyDetails.getImageUrl());
+        mBinding.image.setAdapter(adapter);
+        mBinding.indicators.setNumberOfItems(mPropertyDetails.getImageUrl().size());
+        mBinding.indicators.setSelectedItem(0,true);
+        mBinding.image.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                mBinding.indicators.setSelectedItem(position,true);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         mBinding.foodName.setText(mPropertyDetails.getPropertyName());
         mBinding.foodPrice.setText(mPropertyDetails.getPrice() + " PKR");
         mBinding.description.setText(mPropertyDetails.getDescription());

@@ -60,6 +60,7 @@ dependencies {
         exclude group: 'com.google.android.gms'
         exclude module: "play-services-places"
     }
+    implementation 'com.matthew-tamlin:sliding-intro-screen:3.2.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

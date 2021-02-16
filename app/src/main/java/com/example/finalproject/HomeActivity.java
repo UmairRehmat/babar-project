@@ -3,6 +3,7 @@ package com.example.finalproject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -153,7 +154,7 @@ whatsAppAction(mPropertyDetailsList.get(position).getPhoneNumber());
             intent.putExtra(DetailsActivity.MODEL_DETAILS,mPropertyDetailsList.get(position));
             startActivity(intent);
         });
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new GridLayoutManager(this,2));
         recyclerView.setAdapter(adapter);
     }
 
