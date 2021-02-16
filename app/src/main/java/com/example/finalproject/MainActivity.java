@@ -94,23 +94,35 @@ public class MainActivity
                         {
                             if (task.isSuccessful())
                             {
-                                Toast.makeText(MainActivity.this, "Register Successfully",
-                                               Toast.LENGTH_LONG)
-                                     .show();
-                                finish();
-                                startActivity(new Intent(MainActivity.this, HomeActivity.class));
-
+                                sendVerificationEmail();
                             }
                             else
                             {
                                 Toast.makeText(MainActivity.this, "Could Not Register",
                                                Toast.LENGTH_LONG)
                                      .show();
+                                progressDialog.dismiss();
                             }
-                            progressDialog.dismiss();
 
                         }
                     });
+    }
+
+    private void sendVerificationEmail() {
+        firebaseAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(task -> {
+            if (task.isSuccessful())
+            {
+
+                Toast.makeText(MainActivity.this, "Register Successfully verify your email address",
+                        Toast.LENGTH_LONG)
+                        .show();
+                finish();
+                startActivity(new Intent(MainActivity.this, Login.class));
+                progressDialog.dismiss();
+return;
+            }
+            progressDialog.dismiss();
+        });
     }
 
     @Override
