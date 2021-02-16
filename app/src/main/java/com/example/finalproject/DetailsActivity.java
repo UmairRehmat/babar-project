@@ -82,9 +82,9 @@ public class DetailsActivity extends AppCompatActivity {
 
             String uri = "https://www.google.com/maps/search/?api=1&query="+mPropertyDetails.getGeoPoint().getLatitude()+","+mPropertyDetails.getGeoPoint().getLongitude();
             Log.d("locc",uri);
-            Uri gmmIntentUri = Uri.parse("geo:"+mPropertyDetails.getGeoPoint().getLatitude()+","+mPropertyDetails.getGeoPoint().getLongitude());
+            Uri gmmIntentUri = Uri.parse("geo:"+mPropertyDetails.getGeoPoint().getLatitude()+","+mPropertyDetails.getGeoPoint().getLongitude()+"?q=("+mPropertyDetails.getLocation()+")");
 
-            Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            Intent intent = new Intent(Intent.ACTION_VIEW,gmmIntentUri);
             startActivity(intent);
         });
         mBinding.textmessage.setOnClickListener(view -> {

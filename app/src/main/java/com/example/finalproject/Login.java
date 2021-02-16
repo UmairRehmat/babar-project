@@ -3,7 +3,9 @@ package com.example.finalproject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -98,10 +100,42 @@ public class Login
                         if (task.isSuccessful())
                         {
                             //Profile Activity will be here
-                            Toast.makeText(Login.this, "Successfully SignIn", Toast.LENGTH_LONG)
-                                 .show();
-                            startActivity(
-                                    new Intent(getApplicationContext(), HomeActivity.class));
+                            if(firebaseAuth.getCurrentUser().isEmailVerified()) {
+
+                                Toast.makeText(Login.this, "Successfully SignIn", Toast.LENGTH_LONG)
+                                        .show();
+                                startActivity(
+                                        new Intent(getApplicationContext(), HomeActivity.class));
+                            return;
+                            }
+                            new AlertDialog.Builder(Login.this)
+                                    .setTitle("Verification Failed")
+                                    .setMessage("Please Check your email to verify. or get new verification email but clicking below")
+
+                                    // Specifying a listener allows you to take an action before dismissing the dialog.
+                                    // The dialog is automatically dismissed when a dialog button is clicked.
+                                    .setPositiveButton("Resend verification email", (dialog, which) -> {
+                                        if (which==-1)
+                                        {
+                                            progressDialog.show();
+                                            firebaseAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    progressDialog.dismiss();
+                                                    firebaseAuth.signOut();
+                                                }
+                                            });
+
+                                        }
+                                        // Continue with delete operation
+                                    })
+
+                                    // A null listener allows the button to dismiss the dialog and take no further action.
+                                    .setNegativeButton("Dismiss", (dialogInterface, i) -> {
+                                        firebaseAuth.signOut();
+                                    })
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
 
                         }
                         else
