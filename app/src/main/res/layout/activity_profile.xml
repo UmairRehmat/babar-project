@@ -17,46 +17,57 @@
         android:padding="15dp"
         tools:context=".ProfileActivity">
 
-
-        <ImageView
-            android:id="@+id/chose_file"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/strok"
-            android:scaleType="centerCrop"
-            android:src="@drawable/add_ic"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.14"
-            app:layout_constraintStart_toStartOf="parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.091" />
+            tools:layout_editor_absoluteX="15dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/images_recycler_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toTopOf="@id/chose_file"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/chose_file"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/strok"
+                android:scaleType="centerCrop"
+                android:src="@drawable/add_ic"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/images_recycler_view" />
 
 
-        <TextView
-            android:id="@+id/view_upoad"
-            android:layout_width="353dp"
-            android:layout_height="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.282" />
+            <TextView
+                android:id="@+id/view_upoad"
+                android:layout_width="353dp"
+                android:layout_height="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/chose_file" />
 
-        <Button
-            android:id="@+id/upload_image"
-            android:layout_width="94dp"
-            android:layout_height="45dp"
-            android:layout_marginTop="84dp"
-            android:background="@drawable/round"
-            android:text="UPLOAD"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/chose_file"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.023" />
+            <Button
+                android:id="@+id/upload_image"
+                android:layout_width="94dp"
+                android:layout_height="45dp"
+                android:background="@drawable/round"
+                android:text="UPLOAD"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/chose_file"
+                app:layout_constraintTop_toBottomOf="@+id/images_recycler_view" />
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <EditText
             android:id="@+id/food_name"
@@ -65,13 +76,11 @@
             android:background="@drawable/edittext_background"
             android:hint="Property name"
             android:paddingStart="10dp"
+            android:layout_marginTop="10dp"
             android:singleLine="true"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.157"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.371" />
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
         <EditText
             android:id="@+id/food_price"

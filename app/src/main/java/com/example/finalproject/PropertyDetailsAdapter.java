@@ -4,35 +4,36 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class FoodDetailsAdapter
-        extends RecyclerView.Adapter<FoodDetailsAdapter.foodDetailsViewHolder>
+public class PropertyDetailsAdapter
+        extends RecyclerView.Adapter<PropertyDetailsAdapter.foodDetailsViewHolder>
 {
     private ArrayList<PropertyDetails> mPropertyDetailsList;
     private Context mContext;
     private OnOrderClickListener listener;
     private OnOrderClickListener dellListener;
     private OnOrderClickListener whatsappListener;
+    private OnOrderClickListener cardListener;
 
-    public FoodDetailsAdapter(ArrayList<PropertyDetails> mPropertyDetailsList, Context mContext, OnOrderClickListener listener, OnOrderClickListener dellListener,OnOrderClickListener whatsappListener)
+    public PropertyDetailsAdapter(ArrayList<PropertyDetails> mPropertyDetailsList, Context mContext, OnOrderClickListener listener, OnOrderClickListener dellListener, OnOrderClickListener whatsappListener, OnOrderClickListener cardListener)
     {
         this.mPropertyDetailsList = mPropertyDetailsList;
         this.mContext = mContext;
         this.listener = listener;
         this.dellListener = dellListener;
         this.whatsappListener = whatsappListener;
+        this.cardListener = cardListener;
 
     }
 
@@ -51,15 +52,12 @@ public class FoodDetailsAdapter
     public void onBindViewHolder(@NonNull foodDetailsViewHolder holder, int position)
     {
         PropertyDetails propertyDetails = mPropertyDetailsList.get(position);
-        if (FirebaseAuth.getInstance()
-                        .getCurrentUser() == null || !FirebaseAuth.getInstance().getCurrentUser().getEmail().equals(propertyDetails.getOwnerEmail()))
-            holder.deleteCon.setVisibility(View.GONE);
 
-        holder.foodName.setText(  propertyDetails.getFoodName());
+        holder.foodName.setText(  propertyDetails.getPropertyName());
         holder.foodPrice.setText( propertyDetails.getPrice());
         holder.contact.setText( propertyDetails.getLocation());
         Glide.with(mContext)
-             .load(propertyDetails.getImageUrl())
+             .load(propertyDetails.getImageUrl().get(0))
              .placeholder(R.drawable.ic_menu_gallery)
              .into(holder.foodImage);
         holder.button.setOnClickListener(v -> {
@@ -73,6 +71,10 @@ public class FoodDetailsAdapter
         holder.whatsapp.setOnClickListener(v -> {
             if (whatsappListener != null)
                 whatsappListener.onOrderButtonClick(position);
+        });
+        holder.cardView.setOnClickListener(v -> {
+            if (cardListener != null)
+                cardListener.onOrderButtonClick(position);
         });
     }
 
@@ -93,6 +95,7 @@ public class FoodDetailsAdapter
         private ImageView delete;
         private ImageView whatsapp;
         private FrameLayout deleteCon;
+        private CardView cardView;
 
         public foodDetailsViewHolder(@NonNull View itemView)
         {
@@ -105,6 +108,7 @@ public class FoodDetailsAdapter
             delete = itemView.findViewById(R.id.delete);
             whatsapp = itemView.findViewById(R.id.whatsapp);
             deleteCon = itemView.findViewById(R.id.delete_con);
+            cardView = itemView.findViewById(R.id.main_card);
         }
     }
 

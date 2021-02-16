@@ -9,8 +9,19 @@
         android:title="profile"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/my_ads"
+        android:icon="@drawable/ic_person"
+        android:iconTint="#ffffff"
+        android:title="My Ads" />
+    <item
+        android:id="@+id/home_menu_top"
+        android:icon="@drawable/ic_person"
+        android:iconTint="#ffffff"
+        android:title="Home" />
+    <item
         android:id="@+id/logout"
         android:icon="@drawable/logout"
         android:iconTint="#ffffff"
         android:title="Logout" />
+
 </menu>

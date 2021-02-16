@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Activity;
@@ -45,6 +47,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.schibstedspain.leku.LekuPoi;
 import com.schibstedspain.leku.LocationPickerActivity;
 
 import java.io.File;
@@ -83,18 +86,16 @@ public class ProfileActivity
     private EditText phoneNumber;
     private Button saveData;
     private ProgressDialog progressDialog;
-
-
+    private List<String> imagesList=new ArrayList<>();
     private Uri image_uri;
     private GeoPoint mGeoPointLocation;
+    private RecyclerView mPhotoRecyclerView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
-
         chose_button = findViewById(R.id.chose_file);
         upload_button = findViewById(R.id.upload_image);
         getSupportActionBar().setTitle("Add Menu");
@@ -107,6 +108,7 @@ public class ProfileActivity
         saveData = findViewById(R.id.save_data);
         description = findViewById(R.id.property_description);
         phoneNumber = findViewById(R.id.phone_number);
+        mPhotoRecyclerView = findViewById(R.id.images_recycler_view);
         progressDialog = new ProgressDialog(this);
         saveData.setOnClickListener(v -> {
             if (mImageUploadUrl == null) {
@@ -169,6 +171,10 @@ public class ProfileActivity
                     .getUid(), Url -> {
                 progressDialog.dismiss();
                 mImageUploadUrl = Url;
+                imagesList.add(mImageUploadUrl);
+                image_uri=null;
+                chose_button.setImageDrawable(ProfileActivity.this.getDrawable(R.drawable.add_ic));
+                setUpPhotosRecyclerView();
                 Toast.makeText(ProfileActivity.this, "upload successfully", Toast.LENGTH_SHORT)
                         .show();
             });
@@ -187,6 +193,13 @@ public class ProfileActivity
         }
         FirebaseUser = firebaseAuth.getCurrentUser();
 
+
+    }
+
+    private void setUpPhotosRecyclerView() {
+        PhotosAdapter adapter = new PhotosAdapter(imagesList);
+        mPhotoRecyclerView.setLayoutManager(new LinearLayoutManager(ProfileActivity.this,LinearLayoutManager.HORIZONTAL,false));
+        mPhotoRecyclerView.setAdapter(adapter);
 
     }
 
@@ -220,6 +233,7 @@ public class ProfileActivity
                     ProfileActivity.this);
             return;
         }
+        progressDialog.setMessage("Loading Map.....");
         progressDialog.show();
         openLocationPickerScreen();
 
@@ -302,7 +316,7 @@ public class ProfileActivity
                 .toString();
         PropertyDetails propertyDetails = new PropertyDetails(foodId, foodName.getText()
                 .toString()
-                .trim(), mImageUploadUrl,
+                .trim(), imagesList,
                 firebaseAuth.getCurrentUser()
                         .getUid(), price.getText()
                 .toString()
@@ -357,7 +371,6 @@ public class ProfileActivity
                         .into(chose_button);
             }
         }
-        Log.d("RESULT1****", resultCode+"");
         if (resultCode == Activity.RESULT_OK && data != null)
         {
             Log.d("RESULT****", "OK");

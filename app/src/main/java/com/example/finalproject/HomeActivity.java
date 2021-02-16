@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,8 +18,10 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 
@@ -28,12 +29,15 @@ public class HomeActivity
         extends AppCompatActivity
 {
     private static final int REQUEST_PHONE_CALL = 113;
+    private static final String FOR_MY = "for_my";
     private RecyclerView recyclerView;
     private ProgressDialog progressDialog;
     private ArrayList<PropertyDetails> mPropertyDetailsList;
     private FirebaseFirestore fireStore;
     private FirebaseAuth firebaseAuth;
-
+    private MenuItem myAds;
+    private MenuItem homeMenu;
+   static private boolean myProfile = false;
 
 
     @Override
@@ -44,6 +48,9 @@ public class HomeActivity
         firebaseAuth = FirebaseAuth.getInstance();
         recyclerView = findViewById(R.id.food_recycler_view);
         progressDialog = new ProgressDialog(this);
+        if (myProfile)
+            getSupportActionBar().setTitle("My Ads");
+else
         getSupportActionBar().setTitle("Home");
         loadFoodData();
     }
@@ -54,8 +61,8 @@ public class HomeActivity
         progressDialog.setCancelable(false);
         progressDialog.show();
         fireStore = FirebaseFirestore.getInstance();
-        fireStore.collection("property_details")
-                 .get()
+        Query query = myProfile?fireStore.collection("property_details").whereEqualTo("ownerEmail",firebaseAuth.getCurrentUser().getEmail()):fireStore.collection("property_details");
+               query  .get()
                  .addOnSuccessListener(queryDocumentSnapshots -> {
                      mPropertyDetailsList = new ArrayList<>();
                      for (DocumentSnapshot childData : queryDocumentSnapshots)
@@ -75,6 +82,10 @@ public class HomeActivity
                         .getCurrentUser() == null)
             return false;
         getMenuInflater().inflate(R.menu.goto_profile, menu);
+         if (myProfile)
+          menu.findItem(R.id.my_ads).setVisible(false);
+         else
+            menu.findItem(R.id.home_menu_top).setVisible(false);
         return true;
 
     }
@@ -84,7 +95,27 @@ public class HomeActivity
     {
         if (item.getItemId() == R.id.add_profile) {
             finish();
-            startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+            Intent intent =new Intent(HomeActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        }
+        if (item.getItemId() == R.id.my_ads) {
+//            myAds.setVisible(false);
+//            homeMenu.setVisible(true);
+            myProfile = true;
+//            invalidateOptionsMenu();
+            finish();
+            Intent intent =new Intent(HomeActivity.this, HomeActivity.class);
+            intent.putExtra(FOR_MY,true);
+            startActivity(intent);
+        }
+        if (item.getItemId() == R.id.home_menu_top) {
+//            myAds.setVisible(true);
+//            homeMenu.setVisible(false);
+//            invalidateOptionsMenu();
+            myProfile = false;
+            finish();
+            Intent intent =new Intent(HomeActivity.this, HomeActivity.class);
+            startActivity(intent);
         }
         else  if (item.getItemId() == R.id.logout)
         {
@@ -96,14 +127,14 @@ public class HomeActivity
 
     private void initializeRecyclerView()
     {
-        FoodDetailsAdapter adapter = new FoodDetailsAdapter(mPropertyDetailsList, HomeActivity.this,
+        PropertyDetailsAdapter adapter = new PropertyDetailsAdapter(mPropertyDetailsList, HomeActivity.this,
                                                             position ->makePhoneCall(mPropertyDetailsList.get(position).getPhoneNumber()), position -> {
             progressDialog.setMessage("Deleting...");
             progressDialog.setCancelable(false);
             progressDialog.show();
             fireStore.collection("property_details")
                      .document(mPropertyDetailsList.get(position)
-                                               .getFoodId())
+                                               .getPropertyId())
                      .delete()
                      .addOnCompleteListener(task -> {
                          if (task.isSuccessful())
@@ -117,6 +148,10 @@ public class HomeActivity
                      });
         },position -> {
 whatsAppAction(mPropertyDetailsList.get(position).getPhoneNumber());
+        }, position -> {
+            Intent intent = new Intent(HomeActivity.this,DetailsActivity.class);
+            intent.putExtra(DetailsActivity.MODEL_DETAILS,mPropertyDetailsList.get(position));
+            startActivity(intent);
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
